@@ -1,13 +1,12 @@
 import textwrap
-import unittest
 
 from libcst.codemod import CodemodTest
 
-from addexports.mod import ExportInitImportAliasViaAllCommand
+from addexports.mods import AddExportsToDunderAll
 
 
-class ExportInitImportAliasViaAllCommandTests(CodemodTest):
-    TRANSFORM = ExportInitImportAliasViaAllCommand
+class AddExportsToDunderAllTest(CodemodTest):
+    TRANSFORM = AddExportsToDunderAll
 
     def test_substitution(self) -> None:
         before = textwrap.dedent(

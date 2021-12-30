@@ -5,7 +5,7 @@ import libcst as cst
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
 
 
-class ExportInitImportAliasViaAllCommand(VisitorBasedCodemodCommand):
+class AddExportsToDunderAll(VisitorBasedCodemodCommand):
 
     DESCRIPTION: str = "Export imports from __init__.py in __all__"
 
