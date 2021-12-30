@@ -3,10 +3,11 @@ import sys
 from typing import List
 from addexports.mods import AddExportsToDunderAllCommand
 import libcst.tool as tool
+import libcst
 import typer
 from pathlib import Path
 
-app = typer.Typer(help="addexports code mod")
+app = typer.Typer(help="Add __init__.py exports")
 
 
 def find_init_py(paths: List[Path]) -> List[Path]:
@@ -25,7 +26,7 @@ def find_init_py(paths: List[Path]) -> List[Path]:
 
     return files
 
-@app.command()
+@app.command(help="Modify __init__.py to include exports")
 def mod(paths: List[Path]):
 
     command_instance = AddExportsToDunderAllCommand()
@@ -53,6 +54,23 @@ def mod(paths: List[Path]):
     print(f" - Failed to codemod {result.failures} files.", file=sys.stderr)
     print(f" - {result.warnings} warnings were generated.", file=sys.stderr)
     return 1 if result.failures > 0 else 0
+
+
+@app.command(help="Print ast")
+def debug(file: Path):
+    with open(file, "rb") as fp:
+        code = fp.read()
+
+    tree = libcst.parse_module(
+        code,
+        config=(libcst.PartialParserConfig()),
+    )
+    print(
+        tool.dump(
+            tree
+        )
+    )
+
 
 def main(args: List[str] = sys.argv[1:]) -> None:
     app(args)

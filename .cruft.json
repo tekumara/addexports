@@ -7,7 +7,7 @@
       "repo_name": "addexports",
       "package_name": "addexports",
       "distribution_name": "addexports",
-      "description": "Add init.py exports",
+      "description": "Add __init__.py exports",
       "_template": "git@github.com:tekumara/python-typed-template.git"
     }
   },
