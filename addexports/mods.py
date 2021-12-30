@@ -4,12 +4,11 @@ from typing import Sequence, Set
 import libcst as cst
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
 
-
 class AddExportsToDunderAll(VisitorBasedCodemodCommand):
 
     DESCRIPTION: str = "Export imports from __init__.py in __all__"
 
-    def __init__(self, context: CodemodContext):
+    def __init__(self, context: CodemodContext = CodemodContext()):
         super().__init__(context)
 
         self.names: Set[str] = set()
@@ -27,9 +26,9 @@ class AddExportsToDunderAll(VisitorBasedCodemodCommand):
             return original_node
 
         # construct __all__
-        exports = "['" + "', '".join(sorted(self.names)) + "']"
-        new_line = cst.parse_statement(f"\n__all__ = {exports}")
-        print(new_line, file=sys.stderr)
+        exports = "__all__ = ['" + "', '".join(sorted(self.names)) + "']"
+        new_line = cst.parse_statement(f"\n{exports}")
+        print(exports, file=sys.stderr)
 
         new_body = [*original_node.body, new_line]
         return original_node.with_changes(body=new_body)
