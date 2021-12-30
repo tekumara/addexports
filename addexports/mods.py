@@ -1,9 +1,9 @@
-import sys
 from typing import Sequence, Set
 
 import libcst
 import libcst.codemod
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
+
 
 class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
 

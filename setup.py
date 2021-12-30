@@ -16,7 +16,7 @@ setup(
         "": ["py.typed"],
     },
     entry_points={"console_scripts": ["addexports = addexports.cli:main"]},
-    install_requires=["libcst~=0.3","typer~=0.4"],
+    install_requires=["libcst~=0.3", "typer~=0.4"],
     extras_require={
         "dev": [
             "autoflake~=1.4",

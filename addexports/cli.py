@@ -1,11 +1,13 @@
 import os
 import sys
-from typing import List
-from addexports.mods import AddExportsToDunderAllCommand
-import libcst.tool as tool
-import libcst
-import typer
 from pathlib import Path
+from typing import List
+
+import libcst
+import libcst.tool as tool
+import typer
+
+from addexports.mods import AddExportsToDunderAllCommand
 
 app = typer.Typer(help="Add __init__.py exports")
 
@@ -26,6 +28,7 @@ def find_init_py(paths: List[Path]) -> List[Path]:
 
     return files
 
+
 @app.command(help="Modify __init__.py to include exports")
 def mod(paths: List[Path]):
 
@@ -36,9 +39,7 @@ def mod(paths: List[Path]):
     # adapted from https://github.com/Instagram/LibCST/blob/c44ff0500b52dd78716c36c7d1efd3016e20005f/libcst/tool.py#L572
     try:
         result = tool.parallel_exec_transform_with_prettyprint(
-            command_instance,
-            files,                  # type: ignore
-            show_successes = True
+            command_instance, files, show_successes=True  # type: ignore
         )
     except KeyboardInterrupt:
         print("Interrupted!", file=sys.stderr)
@@ -65,11 +66,7 @@ def debug(file: Path):
         code,
         config=(libcst.PartialParserConfig()),
     )
-    print(
-        tool.dump(
-            tree
-        )
-    )
+    print(tool.dump(tree))
 
 
 def main(args: List[str] = sys.argv[1:]) -> None:
