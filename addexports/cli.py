@@ -37,6 +37,7 @@ def mod(paths: List[Path]):
         result = tool.parallel_exec_transform_with_prettyprint(
             command_instance,
             files,                  # type: ignore
+            show_successes = True
         )
     except KeyboardInterrupt:
         print("Interrupted!", file=sys.stderr)
