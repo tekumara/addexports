@@ -7,7 +7,7 @@ long_description = Path("README.md").read_text()
 setup(
     name="addexports",
     version="0.0.0",
-    description="Add __init__.py exports",
+    description="Discover imports in __init__.py and add them to the __all__ attribute to make them public.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     python_requires=">=3.7",

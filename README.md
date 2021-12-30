@@ -1,23 +1,44 @@
 # addexports
 
-Add init.py exports
+Discover imports in _\_\_init\_\_.py_ and add them to the `__all__` attribute to make them public.
 
-## Development
+## Why?
 
-### Prerequisites
+[PEP 008](https://www.python.org/dev/peps/pep-0008/#id50) states public interfaces can be declared using the `__all__` attribute in a module.
 
-- make
-- node (required for pyright. Install via `brew install node`)
-- python >= 3.7
+mypy in strict mode will detect usage of symbols that are not part of the public interface, eg:
 
-### Getting started
+```
+error: Module "myapp" does not explicitly export attribute "Task"; implicit reexport disabled
+```
 
-To get started run `make install`. This will:
+Likewise pyright will give a similar error:
 
-- install git hooks for formatting & linting on git push
-- create the virtualenv in _.venv/_
-- install this package in editable mode
+```
+error: "Task" is not exported from module "myapp"
+```
 
-Then run `make` to see the options for running checks, tests etc.
+## Usage
 
-`. .venv/bin/activate` activates the virtualenv. When the requirements in `setup.py` change, the virtualenv is updated by the make targets that use the virtualenv.
+```
+Usage: addexports [OPTIONS] COMMAND [ARGS]...
+
+  Discover imports in __init__.py and add them to the __all__ attribute to
+  make them public.
+
+Options:
+  --install-completion [bash|zsh|fish|powershell|pwsh]
+                                  Install completion for the specified shell.
+  --show-completion [bash|zsh|fish|powershell|pwsh]
+                                  Show completion for the specified shell, to
+                                  copy it or customize the installation.
+  --help                          Show this message and exit.
+
+Commands:
+  debug  Print ast
+  mod    Modify __init__.py files in path(s).
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -9,7 +9,7 @@ import typer
 
 from addexports.mods import AddExportsToDunderAllCommand
 
-app = typer.Typer(help="Add __init__.py exports")
+app = typer.Typer(help="Discover imports in __init__.py and add them to the __all__ attribute to make them public.")
 
 
 def find_init_py(paths: List[Path]) -> List[Path]:
@@ -29,8 +29,14 @@ def find_init_py(paths: List[Path]) -> List[Path]:
     return files
 
 
-@app.command(help="Modify __init__.py to include exports")
-def mod(paths: List[Path]):
+@app.command(
+    help="""
+Modify __init__.py files in path(s).
+
+Recurses into subdirs.
+"""
+)
+def mod(paths: List[Path] = typer.Option(default=["."], help="Paths containing __init__.py file(s)")) -> None:
 
     command_instance = AddExportsToDunderAllCommand()
 
@@ -58,7 +64,7 @@ def mod(paths: List[Path]):
 
 
 @app.command(help="Print ast")
-def debug(file: Path):
+def debug(file: Path) -> None:
     with open(file, "rb") as fp:
         code = fp.read()
 
