@@ -2,11 +2,11 @@ import textwrap
 
 from libcst.codemod import CodemodTest
 
-from addexports.mods import AddExportsToDunderAll
+from addexports.mods import AddExportsToDunderAllCommand
 
 
 class AddExportsToDunderAllTest(CodemodTest):
-    TRANSFORM = AddExportsToDunderAll
+    TRANSFORM = AddExportsToDunderAllCommand
 
     def test_substitution(self) -> None:
         before = textwrap.dedent(
