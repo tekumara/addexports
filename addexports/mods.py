@@ -1,8 +1,7 @@
-from typing import Sequence, Set, Optional
+from typing import Optional, Sequence, Set
 
 import libcst
 import libcst.matchers as m
-
 from libcst.codemod import CodemodContext, SkipFile, VisitorBasedCodemodCommand
 
 
@@ -12,10 +11,10 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
 
     def __init__(self, context: CodemodContext = CodemodContext()):
         super().__init__(context)
-        self.reset()
 
-    # reset names etc. so they don't get carried onto the next file
-    def reset(self):
+    def visit_Module(self, node: libcst.Module) -> None:
+        # parallel_exec_transform_with_prettyprint reuses a single command instance across multiple files
+        # so we reset names etc. from any previous modules
         self.names: Set[str] = set()
         self.existing_dunderall: Optional[libcst.Assign] = None
 
@@ -33,13 +32,15 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
         if (
             m.matches(
                 node,
-                m.Assign(targets=[m.ZeroOrMore(), m.AssignTarget(target=m.Name("__all__")), m.ZeroOrMore()]),
+                m.Assign(targets=[m.AssignTarget(target=m.Name("__all__"))]),
             )
             and isinstance(node.value, libcst.List)
         ):
             self.existing_dunderall = node
             existing_values = {
-                e.value.value for e in node.value.elements if isinstance(e.value, libcst.SimpleString)
+                e.value.value.strip("'").strip('"')
+                for e in node.value.elements
+                if isinstance(e.value, libcst.SimpleString)
             }
 
             # NB: assume we have seen all names by now
@@ -47,9 +48,11 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
                 raise SkipFile("Already exported")
 
             # update assignment
-            return node.with_changes(value=libcst.List(elements = [
-                libcst.Element(value=libcst.SimpleString(value = f"'{n}'")) for n in self.names
-            ]))
+            return node.with_changes(
+                value=libcst.List(
+                    elements=[libcst.Element(value=libcst.SimpleString(value=f"'{n}'")) for n in sorted(self.names)]
+                )
+            )
 
         # some other assignment
         return updated_node
@@ -60,15 +63,11 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
 
         if self.existing_dunderall:
             # already updated in leave_Assign
-            new_module = updated_node
-        else:
-            # construct and add new __all__ line
-            exports = "__all__ = ['" + "', '".join(sorted(self.names)) + "']"
-            dunder_all = libcst.parse_statement(f"\n{exports}")
-            new_body = [*updated_node.body, dunder_all]
+            return updated_node
 
-            new_module = updated_node.with_changes(body=new_body)
+        # construct and add new __all__ line
+        exports = "__all__ = ['" + "', '".join(sorted(self.names)) + "']"
+        dunder_all = libcst.parse_statement(f"\n{exports}")
+        new_body = [*updated_node.body, dunder_all]
 
-        # reset names etc. so they don't get carried onto the next file
-        self.reset()
-        return new_module
+        return updated_node.with_changes(body=new_body)
