@@ -23,7 +23,11 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
         if isinstance(nodenames, libcst.ImportStar):
             self.warn("from x import * not supported")
         elif isinstance(nodenames, Sequence):
-            self.names.update({ia.evaluated_name for ia in nodenames})
+            for nn in nodenames:
+                # use alias if present
+                name = nn.evaluated_alias or nn.evaluated_name
+                if not name.startswith('_'):
+                    self.names.add(name)
         return
 
     def leave_Assign(self, original_node: libcst.Assign, updated_node: libcst.Assign) -> libcst.Assign:
@@ -44,7 +48,7 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
             }
 
             # NB: assume we have seen all names by now
-            if not self.names.difference(existing_values):
+            if not self.names.symmetric_difference(existing_values):
                 raise SkipFile("Already exported")
 
             # update assignment

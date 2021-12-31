@@ -15,14 +15,24 @@ class AddExportsToDunderAllTest(CodemodTest):
             """
             import features
             from .tasks import Task1, Task2
-            from .tasks import Task3 as Task3
+
+            # use alias name
+            from .tasks import TASK3 as Task3
+
+            # treat as private because of underscore
+            from .tasks import Task4 as _Task4
             """
         )
         after = textwrap.dedent(
             """
             import features
             from .tasks import Task1, Task2
-            from .tasks import Task3 as Task3
+
+            # use alias name
+            from .tasks import TASK3 as Task3
+
+            # treat as private because of underscore
+            from .tasks import Task4 as _Task4
 
             __all__ = ['Task1', 'Task2', 'Task3']
             """
