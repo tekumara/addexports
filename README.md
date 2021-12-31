@@ -39,6 +39,20 @@ Commands:
   mod    Modify __init__.py files in path(s).
 ```
 
+For example this _\_\_init\_\_.py_:
+
+```python
+from .tasks import Task1
+```
+
+will be modified to:
+
+```python
+from .tasks import Task1
+
+__all__ = ['Task1']
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
