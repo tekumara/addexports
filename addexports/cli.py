@@ -31,12 +31,12 @@ def find_init_py(paths: List[Path]) -> List[Path]:
 
 @app.command(
     help="""
-Modify __init__.py files in path(s).
+        Modify __init__.py files in path(s).
 
-Recurses into subdirs.
-"""
+        Recurses into subdirs.
+        """
 )
-def mod(paths: List[Path] = typer.Option(default=["."], help="Paths containing __init__.py file(s)")) -> None:
+def mod(paths: List[Path] = typer.Argument(default = None, help="Paths containing __init__.py file(s)")) -> int:
 
     command_instance = AddExportsToDunderAllCommand()
 
@@ -44,7 +44,7 @@ def mod(paths: List[Path] = typer.Option(default=["."], help="Paths containing _
 
     # adapted from https://github.com/Instagram/LibCST/blob/c44ff0500b52dd78716c36c7d1efd3016e20005f/libcst/tool.py#L572
     try:
-        result = tool.parallel_exec_transform_with_prettyprint(
+        result = tool.parallel_exec_transform_with_prettyprint( # type: ignore
             command_instance, files, show_successes=True  # type: ignore
         )
     except KeyboardInterrupt:
