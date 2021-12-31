@@ -63,8 +63,8 @@ def mod(paths: List[Path] = typer.Argument(default = None, help="Paths containin
     return 1 if result.failures > 0 else 0
 
 
-@app.command(help="Print ast")
-def debug(file: Path) -> None:
+@app.command(help="Print ast for a file")
+def ast(file: Path) -> None:
     with open(file, "rb") as fp:
         code = fp.read()
 
