@@ -1,4 +1,4 @@
-from typing import Optional, Sequence, Set
+from typing import List, Optional, Sequence, Set
 
 import libcst
 import libcst.matchers as m
@@ -9,8 +9,9 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
 
     DESCRIPTION: str = "Export imports from __init__.py in __all__"
 
-    def __init__(self, context: CodemodContext = CodemodContext()):
+    def __init__(self, context: CodemodContext = CodemodContext(), ignore: List[str] = []):
         super().__init__(context)
+        self.ignore = ignore
 
     def visit_Module(self, node: libcst.Module) -> None:
         # parallel_exec_transform_with_prettyprint reuses a single command instance across multiple files
@@ -26,7 +27,7 @@ class AddExportsToDunderAllCommand(VisitorBasedCodemodCommand):
             for nn in nodenames:
                 # use alias if present
                 name = nn.evaluated_alias or nn.evaluated_name
-                if not name.startswith('_'):
+                if not name.startswith("_") and name not in self.ignore:
                     self.names.add(name)
         return
 

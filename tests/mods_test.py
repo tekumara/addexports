@@ -21,6 +21,10 @@ class AddExportsToDunderAllTest(CodemodTest):
 
             # treat as private because of underscore
             from .tasks import Task4 as _Task4
+
+            # ignore
+            from .tasks import Task5 as Task5
+
             """
         )
         after = textwrap.dedent(
@@ -34,11 +38,14 @@ class AddExportsToDunderAllTest(CodemodTest):
             # treat as private because of underscore
             from .tasks import Task4 as _Task4
 
+            # ignore
+            from .tasks import Task5 as Task5
+
             __all__ = ['Task1', 'Task2', 'Task3']
             """
         )
 
-        self.assertCodemod(before, after)
+        self.assertCodemod(before, after, ignore=["Task5"])
 
     def test_ignore_existing_exports_single_quoted(self) -> None:
         before = textwrap.dedent(

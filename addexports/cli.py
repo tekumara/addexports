@@ -36,9 +36,12 @@ def find_init_py(paths: List[Path]) -> List[Path]:
         Recurses into subdirs.
         """
 )
-def mod(paths: List[Path] = typer.Argument(default=None, help="Paths containing __init__.py file(s)")) -> int:
+def mod(
+    paths: List[Path] = typer.Argument(default=None, help="Paths containing __init__.py file(s)"),
+    ignore: List[str] = typer.Option(default=[], help="Imports to ignore (can be repeated)"),
+) -> int:
 
-    command_instance = AddExportsToDunderAllCommand()
+    command_instance = AddExportsToDunderAllCommand(ignore=ignore)
 
     files = find_init_py(paths)
 

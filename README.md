@@ -35,8 +35,8 @@ Options:
   --help                          Show this message and exit.
 
 Commands:
-  debug  Print ast
-  mod    Modify __init__.py files in path(s).
+  ast  Print ast for a file
+  mod  Modify __init__.py files in path(s).
 ```
 
 For example this _\_\_init\_\_.py_:
@@ -51,6 +51,12 @@ will be modified to:
 from .tasks import Task1
 
 __all__ = ['Task1']
+```
+
+To ignore the imports `applogger` and `appconfig`:
+
+```
+addexports mod myapp/__init__.py --ignore applogger --ignore appconfig
 ```
 
 ## Contributing
